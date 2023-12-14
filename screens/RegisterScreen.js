@@ -2,14 +2,14 @@ import React, { useLayoutEffect, useState } from "react";
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { Input, Button, Text } from "react-native-elements";
 import { StatusBar } from 'expo-status-bar';
-import { auth } from "../firebase";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const RegisterScreen = ({ navigation }) => {
     const [name , setName] = useState("")
     const [email , setEmail] = useState("")
     const [password , setPassword] = useState("")
-    const [imageUrl , setImageUrl] = useState("")
+    const [imageURL , setImageURL] = useState("")
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -20,7 +20,7 @@ const RegisterScreen = ({ navigation }) => {
     const register = () => {
         createUserWithEmailAndPassword(auth, email, password)
         .then(authUser =>{
-            authUser.user.update({
+            updateProfile(auth.currentUser, {
                 displayName: name,
                 photoURL: imageURL || "https://th.bing.com/th/id/OIP.lkVN1WDlcV2jQCq-9LT7-wHaIJ?rs=1&pid=ImgDetMain" 
             })
@@ -28,7 +28,7 @@ const RegisterScreen = ({ navigation }) => {
         .catch((error) => alert(error.message));
     };
     return (
-        <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View behavior='padding' style={styles.container}>
             <StatusBar style="light " />
             <Text h3 style={{ marginBottom: 50 }}>
                 Create an Account
@@ -56,8 +56,8 @@ const RegisterScreen = ({ navigation }) => {
                 <Input
                     placeholder='Profile Picture URL (optional)'
                     type='password'
-                    value={imageUrl}
-                    onChangeText={(text) => setImageUrl(text)}
+                    value={imageURL}
+                    onChangeText={(text) => setImageURL(text)}
                     onSubmitEditing={register}
                 />
             </View>
@@ -67,7 +67,7 @@ const RegisterScreen = ({ navigation }) => {
              title='Register'
              containerStyle={styles.button}
             />
-        </KeyboardAvoidingView>
+        </View>
     )
 }
 
